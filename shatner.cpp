@@ -81,9 +81,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	LPWSTR file = NULL;
 
 	USHAContext ctx;
-	CMemoryMappedFile mmFile;
-	uint8_t Message_Digest[USHAMaxHashSize];
-	std::wstring digest;
 
 	if (argc == 2)
 	{
@@ -100,7 +97,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 	*/
 
-	if (mmFile.Create(file) == false)
+	CMemoryMappedFile mmFile(file);
+	if (mmFile.IsCreated() == false)
 	{
 		return -2;
 	}
@@ -112,11 +110,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	{
 		return -4;
 	}
+
+	int hashSize = USHAHashSize(ctx.whichSha);
+	uint8_t Message_Digest[USHAMaxHashSize];
 	if (USHAResult(&ctx, Message_Digest) != 0)
 	{
 		return -5;
 	}
-	hexEncode(Message_Digest, USHAMaxHashSize, digest);
+
+	std::wstring digest;
+	hexEncode(Message_Digest, hashSize, digest);
 
 	::OutputDebugString(file);
 	::OutputDebugString(L" ");
