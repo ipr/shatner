@@ -60,6 +60,32 @@ void hexEncode(const unsigned char *pBuffer, const size_t nLen, std::wstring &sz
 	}
 }
 
+SHAversion modeToType(std::wstring mode)
+{
+	// check mode
+	if (mode == L"-1")
+	{
+		return SHA1;
+	}
+	else if (mode == L"-2")
+	{
+		return SHA224;
+	}
+	else if (mode == L"-3")
+	{
+		return SHA256;
+	}
+	else if (mode == L"-4")
+	{
+		return SHA384;
+	}
+	else if (mode == L"-5")
+	{
+		return SHA512;
+	}
+	// unspecified
+	return SHA512;
+}
 
 // Global Variables:
 HINSTANCE g_hInst;                                // current instance
@@ -91,33 +117,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	else if (argc > 2)
 	{
 		std::wstring mode(args[1]);
-
-		// check mode
-		if (mode == L"-1")
-		{
-			ctx.whichSha = SHA1;
-		}
-		else if (mode == L"-2")
-		{
-			ctx.whichSha = SHA224;
-		}
-		else if (mode == L"-3")
-		{
-			ctx.whichSha = SHA256;
-		}
-		else if (mode == L"-4")
-		{
-			ctx.whichSha = SHA384;
-		}
-		else if (mode == L"-5")
-		{
-			ctx.whichSha = SHA512;
-		}
-		else
-		{
-			return -2;
-		}
-
+		ctx.whichSha = modeToType(mode);
 		file = args[2];
 	}
 
