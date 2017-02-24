@@ -118,6 +118,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 	hexEncode(Message_Digest, USHAMaxHashSize, digest);
 
+	::OutputDebugString(file);
+	::OutputDebugString(L" ");
+	::OutputDebugString(digest.c_str());
+	::OutputDebugString(L"\r\n");
 
 	/*
 	for (int i = 1; i < argc; i++)
