@@ -88,14 +88,38 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		ctx.whichSha = SHA512;
 		file = args[1];
 	}
-	/*
 	else if (argc > 2)
 	{
+		std::wstring mode(args[1]);
+
 		// check mode
-		if (args[1] == "-1")
-			// ->sha1
+		if (mode == L"-1")
+		{
+			ctx.whichSha = SHA1;
+		}
+		else if (mode == L"-2")
+		{
+			ctx.whichSha = SHA224;
+		}
+		else if (mode == L"-3")
+		{
+			ctx.whichSha = SHA256;
+		}
+		else if (mode == L"-4")
+		{
+			ctx.whichSha = SHA384;
+		}
+		else if (mode == L"-5")
+		{
+			ctx.whichSha = SHA512;
+		}
+		else
+		{
+			return -2;
+		}
+
+		file = args[2];
 	}
-	*/
 
 	CMemoryMappedFile mmFile(file);
 	if (mmFile.IsCreated() == false)
