@@ -12,6 +12,7 @@
 #include "sha.h"
 
 #include <string>
+#include <iostream>
 
 void hexEncode(const unsigned char *pBuffer, const size_t nLen, std::wstring &szOutput)
 {
@@ -87,38 +88,22 @@ SHAversion modeToType(std::wstring mode)
 	return SHA512;
 }
 
-// Global Variables:
-HINSTANCE g_hInst;                                // current instance
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+int digestFile(int argc, wchar_t **argv, std::wstring &digest)
 {
-	g_hInst = hInstance;
-
-	int argc = 0;
-	LPWSTR *args = CommandLineToArgvW(GetCommandLineW(), &argc);
-	if (args == NULL || argc < 2)
-	{
-		return -1;
-	}
-
-	LPWSTR file = NULL;
-
+	wchar_t *file = NULL;
 	USHAContext ctx;
 
 	if (argc == 2)
 	{
 		// just select default mode, expect file
 		ctx.whichSha = SHA512;
-		file = args[1];
+		file = argv[1];
 	}
 	else if (argc > 2)
 	{
-		std::wstring mode(args[1]);
+		std::wstring mode(argv[1]);
 		ctx.whichSha = modeToType(mode);
-		file = args[2];
+		file = argv[2];
 	}
 
 	CMemoryMappedFile mmFile(file);
@@ -142,23 +127,52 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return -5;
 	}
 
-	std::wstring digest;
+	//std::wstring digest;
 	hexEncode(Message_Digest, hashSize, digest);
+	return 0;
+}
 
-	::OutputDebugString(file);
-	::OutputDebugString(L" ");
+/*
+// Global Variables:
+HINSTANCE g_hInst;                                // current instance
+
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+                     _In_opt_ HINSTANCE hPrevInstance,
+                     _In_ LPWSTR    lpCmdLine,
+                     _In_ int       nCmdShow)
+{
+	g_hInst = hInstance;
+
+	int argc = 0;
+	LPWSTR *args = CommandLineToArgvW(GetCommandLineW(), &argc);
+	if (args == NULL || argc < 2)
+	{
+		return -1;
+	}
+
+	std::wstring digest;
+	if (digestFile(argc, args, digest) < 0)
+	{
+		return -1;
+	}
+
 	::OutputDebugString(digest.c_str());
 	::OutputDebugString(L"\r\n");
-
-	/*
-	for (int i = 1; i < argc; i++)
-	{
-		::OutputDebugString(args[i]);
-		::OutputDebugString(L"\r\n");
-	}
-	*/
 
 	LocalFree(args);
 	return 0;
 }
+*/
 
+int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
+{
+	std::wstring digest;
+	if (digestFile(argc, argv, digest) < 0)
+	{
+		return -1;
+	}
+
+	std::wcout << L"digest: " << digest << std::endl;
+
+	return 0;
+}

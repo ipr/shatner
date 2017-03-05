@@ -49,6 +49,8 @@ Temporary Items
 *.tlog
 
 Debug/
+Release/
+x64/
 ipch/
 *.suo
 *.opendb
