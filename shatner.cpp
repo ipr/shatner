@@ -88,15 +88,14 @@ SHAversion modeToType(std::wstring mode)
 	return SHA512;
 }
 
-int digestFile(int argc, wchar_t **argv, std::wstring &digest)
+int digestFile(int argc, wchar_t **argv, std::wstring &file, std::wstring &digest)
 {
-	wchar_t *file = NULL;
 	USHAContext ctx;
+	ctx.whichSha = SHA512;
 
 	if (argc == 2)
 	{
 		// just select default mode, expect file
-		ctx.whichSha = SHA512;
 		file = argv[1];
 	}
 	else if (argc > 2)
@@ -106,7 +105,7 @@ int digestFile(int argc, wchar_t **argv, std::wstring &digest)
 		file = argv[2];
 	}
 
-	CMemoryMappedFile mmFile(file);
+	CMemoryMappedFile mmFile(file.c_str());
 	if (mmFile.IsCreated() == false)
 	{
 		return -2;
@@ -127,7 +126,6 @@ int digestFile(int argc, wchar_t **argv, std::wstring &digest)
 		return -5;
 	}
 
-	//std::wstring digest;
 	hexEncode(Message_Digest, hashSize, digest);
 	return 0;
 }
@@ -150,10 +148,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return -1;
 	}
 
+	std::wstring file;
 	std::wstring digest;
-	if (digestFile(argc, args, digest) < 0)
+
+	int res = digestFile(argc, argv, file, digest);
+	if (res < 0)
 	{
-		return -1;
+		return res;
 	}
 
 	::OutputDebugString(digest.c_str());
@@ -166,13 +167,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
 {
-	std::wstring digest;
-	if (digestFile(argc, argv, digest) < 0)
+	if (argc < 2)
 	{
 		return -1;
 	}
 
-	std::wcout << L"digest: " << digest << std::endl;
+	std::wstring file;
+	std::wstring digest;
 
+	int res = digestFile(argc, argv, file, digest);
+	if (res < 0)
+	{
+		return res;
+	}
+
+	std::wcout << L"digest: " << digest << L" " << file << std::endl;
 	return 0;
 }
