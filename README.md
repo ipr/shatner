@@ -1,8 +1,16 @@
 # shatner
 sha-testing tool
 
-testing RFC 6234
+Testing RFC 6234
 
+Modeflags (defaults to 512 if unspecified/unknown):
+"-1" SHA1
+"-2" SHA224
+"-3" SHA256
+"-4" SHA384
+"-5" SHA512
+
+See RFC 6234 for details.
 /*
    Copyright (c) 2011 IETF Trust and the persons identified as
    authors of the code.  All rights reserved.
